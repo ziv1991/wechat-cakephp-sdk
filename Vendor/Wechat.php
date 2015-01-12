@@ -1091,8 +1091,8 @@ class Wechat {
 	            }
 	            $this->access_token = $json['access_token'];
 	            $expire             = $json['expires_in'] ? intval($json['expires_in']) - 100 : 3600;
-	                //存缓存
-	                WechatCache::set('token_' . $appid, $this->access_token, $expire);
+	            //存缓存
+	            WechatCache::set('token_' . $appid, $this->access_token, $expire);
 	            return $this->access_token;
 	        }
         }
@@ -1120,7 +1120,7 @@ class Wechat {
         if (!$appid)
             $appid              = $this->appid;
         $this->jsapi_ticket = '';
-        //TODO: remove cache
+        WechatCache::del('jsapi_ticket_' . $appid);
         return true;
     }
 
@@ -1136,19 +1136,23 @@ class Wechat {
             $this->jsapi_ticket = $jsapi_ticket;
             return $this->access_token;
         }
-        //TODO: get the cache jsapi_ticket
-        $result = $this->http_get(self::API_URL_PREFIX . self::GET_TICKET_URL . 'access_token=' . $this->access_token . '&type=jsapi');
-        if ($result) {
-            $json = json_decode($result, true);
-            if (!$json || !empty($json['errcode'])) {
-                $this->errCode = $json['errcode'];
-                $this->errMsg  = $json['errmsg'];
-                return false;
+
+        //获取缓存
+        if (!$this->jsapi_ticket = WechatCache::get('jsapi_ticket_' . $appid)) {
+            $result = $this->http_get(self::API_URL_PREFIX . self::GET_TICKET_URL . 'access_token=' . $this->access_token . '&type=jsapi');
+            if ($result) {
+                $json = json_decode($result, true);
+                if (!$json || !empty($json['errcode'])) {
+                    $this->errCode = $json['errcode'];
+                    $this->errMsg  = $json['errmsg'];
+                    return false;
+                }
+                $this->jsapi_ticket = $json['ticket'];
+                $expire             = $json['expires_in'] ? intval($json['expires_in']) - 100 : 3600;
+                //存缓存
+                WechatCache::set('jsapi_ticket_' . $appid, $this->jsapi_ticket, $expire);
+                return $this->jsapi_ticket;
             }
-            $this->jsapi_ticket = $json['ticket'];
-            $expire             = $json['expires_in'] ? intval($json['expires_in']) - 100 : 3600;
-            //TODO: cache jsapi_ticket
-            return $this->jsapi_ticket;
         }
         return false;
     }
