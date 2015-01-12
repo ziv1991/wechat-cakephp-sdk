@@ -12,7 +12,8 @@ controller中有使用范例
 - 2014-12-25 增加卡券接口
 - 2015-01-12 同步到最新版本,上传卡券logo的接口就是上传媒体文件的接口
 
-###在CakePHP中使用Wechat.php
+在CakePHP中使用Wechat.php
+-------
 此用法不考虑多平台,每次需要获取商户信息
 
 引入微信接口库文件
@@ -43,7 +44,8 @@ controller中有使用范例
             );
         }
         
-###在CakePHP中使用PtApi
+在CakePHP中使用PtApi
+-------
 封装为PtApi,可以兼容多平台,如服务窗,封装获取平台配置的方法,增加token过期重试一次机制
 
         //得到scene_id和shop_id
@@ -62,3 +64,8 @@ controller中有使用范例
             //保存二维码信息
             //...
         }
+     
+License
+-------
+This is licensed under the GNU LGPL, version 2.1 or later.   
+For details, see: http://creativecommons.org/licenses/LGPL/2.1/
