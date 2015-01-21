@@ -77,7 +77,7 @@ class PtApi extends Model {
                     }
                     $wxObj  = new Wechat($ptSettingData['settings']);
                     $result = self::run($wxObj, $function, $options);
-                    if ($wxObj->errCode == 40001) {
+                    if ($wxObj->errCode == 40001 ||$wxObj->errCode == 42001) {
                         $wxObj->resetAuth();
                         $result = self::run($wxObj, $function, $options);
                     }
